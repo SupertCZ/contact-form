@@ -12,7 +12,8 @@ const defFormData = {
     email: "",
     telephone: "",
     message: "",
-    formSending: false
+    formSending: false,
+    formValid: false
 };
 
 function App() {
@@ -20,24 +21,19 @@ function App() {
     const [formData, setFormData] = useState(defFormData)
 
     const onInput = (e) => {
-        setFormData({...formData, [e.target.id]: e.target.value});
+        const finalData = {...formData, [e.target.id]: e.target.value};
+
+        if (!finalData.message ||
+            (finalData.telephone && !finalData.telephone.match(telephoneRegex)) || (finalData.email && !finalData.email.match(emailRegex)) || 
+            (!finalData.telephone && !finalData.email)) {
+            finalData.formValid = false;
+        } else finalData.formValid = true;
+        
+        setFormData(finalData);
     }
 
     const ValidateAndSend = async (e) => {
         e.preventDefault();
-
-        if (!formData.message) {
-            alert(Messages.invalidMessage);
-            return;
-        }
-
-        if ((formData.telephone && !formData.telephone.match(telephoneRegex)) || (formData.email && !formData.email.match(emailRegex))) {
-            alert(Messages.invalidTelephoneOrEmail);
-            return;
-        } else if (!formData.telephone && !formData.email) {
-            alert(Messages.emailOrTelephoneHasToBeFilled);
-            return;
-        }
 
         setFormData({...formData, formSending: true});
 
@@ -67,7 +63,7 @@ function App() {
                 <TextInput value={formData.email} fieldName={"email"} onInput={onInput}  />
                 <TextInput value={formData.telephone} fieldName={"telephone"} onInput={onInput}  />
                 <TextInput value={formData.message} fieldName={"message"} onInput={onInput} isTextArea={true} />
-                <button type="submit" disabled={formData.formSending}>Odeslat formulář</button>
+                <button type="submit" disabled={formData.formSending||!formData.formValid}>Odeslat formulář</button>
             </form>
         </>
         

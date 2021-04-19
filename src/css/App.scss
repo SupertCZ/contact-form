@@ -60,7 +60,7 @@ form {
 
         &:disabled {
             background: rgb(66,66,66);
-            cursor: wait;
+            cursor: not-allowed;
         }
     }
 }
